@@ -50,5 +50,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=nilsharr/fibonacci:buildcache
-          cache-to: type=registry,ref=nilsharr/fibonacci:buildcache,mode=max
+          cache-from: type=registry,ref=nilsharr/fibonacci:buildcache_dod1
+          cache-to: type=registry,ref=nilsharr/fibonacci:buildcache_dod1,mode=max
