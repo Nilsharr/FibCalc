@@ -1,13 +1,27 @@
 # syntax=docker/dockerfile:1.2
-# specyfikacja architektury
-FROM --platform=$BUILDPLATFORM alpine AS builder
+# specyfikacja architektury bieżącego komputera
+FROM --platform=$BUILDPLATFORM ubuntu AS builder
 
-RUN apk add --no-cache clang musl-dev lld compiler-rt upx
-WORKDIR /fibonacci
+# dodanie kompilatora i paczki umożliwającej kompilację na arm64 (aby móc kompilowaćna inne trzeba dodać potzebne paczki)
+RUN apt-get update && apt-get install -y clang gcc-aarch64-linux-gnu
+WORKDIR /fibonacci 
 COPY fib.c .
-RUN clang -o fib fib.c -fuse-ld=lld --rtlib=compiler-rt -static -s -Oz && upx --ultra-brute fib
 
-FROM scratch
+# zmienna systemowa z podaną architekturą
+ARG TARGETPLATFORM
+
+# zmienna systemowa przekazująca podaną architekturę do kompilatora
+ENV TARGET ""
+
+# ustawianie odpowiedniej wartości architektury przekazywanej do kompilatora, a następnie kompilowanie
+RUN case "$TARGETPLATFORM" in \
+    "linux/amd64") TARGET="amd64-linux";; \
+    "linux/arm64") TARGET="aarch64-linux-gnu";; \
+    *) TARGET="";; \
+    esac \
+    && clang -o fib fib.c --target=$TARGET -s -Oz
+
+FROM ubuntu
 
 WORKDIR /fibonacci
 COPY --from=builder /fibonacci/fib .
