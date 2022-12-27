@@ -2,7 +2,7 @@
 # specyfikacja architektury bieżącego komputera
 FROM --platform=$BUILDPLATFORM ubuntu AS builder
 
-# dodanie kompilatora i paczki umożliwającej kompilację na arm64 (aby móc kompilowaćna inne trzeba dodać potzebne paczki)
+# dodanie kompilatora i paczki umożliwającej kompilację na arm64 (aby móc kompilować na inne trzeba dodać potrzebne paczki)
 RUN apt-get update && apt-get install -y clang gcc-aarch64-linux-gnu
 WORKDIR /fibonacci 
 COPY fib.c .
